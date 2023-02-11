@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {sortBy} from 'lodash';
 
 import TaskInput from "./taskInput";
@@ -11,20 +11,35 @@ export default function AppTodo() {
 
     let [tasksAr, setTasksAr] = useState([])
 
+    useEffect(()=> {
+        // check if allready heva a save task in local storge and update the array is exist;
+        if(localStorage['Tasks']) {
+            setTasksAr(JSON.parse(localStorage['Tasks']))
+        }
+    }, [])
+
     const addTaskToArray =(_task)=> {
         let sortAr = [...tasksAr, _task];
         sortAr = sortBy(sortAr, 'time');
-        setTasksAr(sortAr);
-        console.log(tasksAr);
+        // setTasksAr(sortAr);  declare on the save to local function
+        // console.log(tasksAr);
+        saveToLocal(sortAr);
     }
 
     const removeAllTasks =(_ar)=> {
-        setTasksAr([]);
+        // setTasksAr([]); declare on the save to local function
+        saveToLocal([])
     }
 
     const removeSingleTask =(_id)=> {
         let tempAr = tasksAr.filter(task => task.id !== _id);
-        setTasksAr(tempAr);
+        // setTasksAr(tempAr); declare on the save to local function
+        saveToLocal(tempAr)
+    }
+
+    const saveToLocal =(_ar)=> {
+        localStorage.setItem('Tasks', JSON.stringify(_ar));
+        setTasksAr(_ar);
     }
 
 
